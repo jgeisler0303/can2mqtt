@@ -1,0 +1,39 @@
+{
+    canbus: {
+        channel: "vcan0",
+        interface: "socketcan_ctypes"
+    },
+    canopen: {
+        sync_interval: 10,
+        sync_count: 6,
+        auto_start: true
+    },
+    mqtt: {
+//        username: "user", // not implemented yet
+//        password: "pass",// not implemented yet
+        will: { // not implemented yet
+            topic: "/last/will/topic",
+            payload: "I died"
+        }
+    },
+    receivers: [
+        {
+            canid: "0x123",
+            unpack_template: "u8u8u8",
+            var_names: ["val1", "val2", "val3 via int2on_off"],
+            topic_template: "/test/bla",
+            payload_template: "val1= {val1:x}, val2= {val2:x}, val3= {val3}"
+        },
+    ],
+    transmitters: [
+        {
+            subscriptions: "/test/trans",
+            canid: "val1",
+            pack_template: "u8",
+            var_names: "val1",
+            topic_template: "",
+            payload_template: "{val1:d}",
+//            exact_match: true // not implemented yet
+        },
+    ]
+}
