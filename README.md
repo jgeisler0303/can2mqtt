@@ -17,8 +17,10 @@ Cennection to MQTT broker is made using [paho-mqtt package](https://pypi.python.
 You may set `client_id` (default is `can2mqtt`), `host` (default is `127.0.0.1`) and `port` (default is `1883`).
 
 ## Packing and Unpacking of CAN message
-CAN messages are packed and unpacked using [bitstruct package](http://bitstruct.readthedocs.io/en/latest/#).
-See [here](http://bitstruct.readthedocs.io/en/latest/#bitstruct.pack) for valid syntax of `pack_template` of transmitter resp. `unpack_template` of receiver.
+~~CAN messages are packed and unpacked using [bitstruct package](http://bitstruct.readthedocs.io/en/latest/#).~~
+Due to a problem with endianness, packing and unpacking is now done using the [struct package](https://docs.python.org/2/library/struct.html).
+This is a little bit less flexible; it doesn't allow packing single bits into one byte and odd 24 bit or 56 bit integers are not supported, but being able to unpack CANopen data which come in little endian was more importatnt for me.
+See [here](https://docs.python.org/2/library/struct.html#format-strings) for valid syntax of `pack_template` of transmitter resp. `unpack_template` of receiver templates.
 Each value from the template is later referenced by a variable name given in `var_names`.
 
 ## Formating of topic and payload string
@@ -36,7 +38,7 @@ The CAN id is either a decimal integer, a hex formatted integer string or a sing
 ## Transforming values
 Unpacked and parsed values named by variable names in the `var_names` parameter may be transformed using a python function defined in the `can2mqtt_vias.py` module.
 Each such function must expect one scalar parameter and return one scalar parameter.
-To use a translation the variable name in `var_names` has to be followed by th key word "via" and then the name of the transformation function.
+To use a translation the variable name in `var_names` has to be followed by the key word "via" and then the name of the transformation function.
 
 # Logging
 For logging [python logging](https://docs.python.org/2/library/logging.html) is used.

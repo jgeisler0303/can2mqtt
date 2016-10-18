@@ -13,7 +13,7 @@ import socket
 import sys
 from threading import Event, Thread
 
-import bitstruct
+import struct
 import parse
 import jsoncfg
 import logging
@@ -67,13 +67,7 @@ def do_nmt_auto_start(m, bus):
             msg = bytearray([1, device_id])
             bus.send(can.Message(extended_id= False, arbitration_id= 0x000, data= msg))
     
-mqtt_connected= False
-def on_connect(client, userdata, flags, rc):
-    global mqtt_connected
-    mqtt_connected= True
-
-#    on_disconnect()
-    
+   
 def on_message(client, userdata, message):
     CANBus= userdata[0]
     transmitters= userdata[1]
@@ -139,9 +133,10 @@ class CanMessage2MQTT:
         data= dict()
         data['canid']= m.arbitration_id
         data['t']= m.timestamp
-        # add error handling if unpacking fails (rethrow)
+        data['dt']= datetime.datetime.fromtimestamp(m.timestamp)
+        candata= m.data
         try:
-            vals= bitstruct.unpack(self.unpack_template, m.data)
+            vals= struct.unpack(self.unpack_template, candata)
         except BaseException as e:
             raise ValueError("Error unpacking can data: %s" % e)
         try:
@@ -243,7 +238,7 @@ class MQTT2CanMessage:
             raise ValueError("Error collecting values: %s" % e)
         
         try:
-            data= bitstruct.pack(self.pack_template, *vals)
+            data= struct.pack(self.pack_template, *vals)
         except BaseException as e:
             raise ValueError("Error packing can data: %s" % e)
             
@@ -342,12 +337,13 @@ def main():
     
     logging.info("Starting MQTT")
     client = mqtt.Client(client_id=c.mqtt.client_id("can2mqtt"), protocol=mqtt.MQTTv31)
-    client.on_connect = on_connect
-    # client.on_disconnect = on_disconnect
     client.on_message= on_message
     client.user_data_set((bus, transmitters))
     try:
-        client.connect(c.mqtt.host("127.0.0.1"), c.mqtt.port(1883), 60)
+        mqtt_errno= client.connect(c.mqtt.host("127.0.0.1"), c.mqtt.port(1883), 60)
+        if mqtt_errno!=0:
+            raise Exception(error_string(mqtt_errno))
+                            
         client.loop_start()
     except BaseException as e:
         logging.error("MQTT error: %s" % e)
@@ -355,15 +351,6 @@ def main():
         notifier.stop()
         sys.exit(1)
         
-    for i in range(20):
-        if mqtt_connected:
-            break
-        time.sleep(0.1)
-    else:
-        logging.error("Could not establish connection to MQTT server after 2s")
-        bus.shutdown()
-        notifier.stop()
-        sys.exit(1)
         
     logging.info("Adding MQTT subscriptions")
     for s in transmitters:
@@ -405,6 +392,8 @@ def main():
     logging.info("Starting main loop")
     try:
         while True:
+            # test delay for stress test
+            # time.sleep(0.005)
             m= canBuffer.get_message()
             if m is not None:
                 if nmt_auto_start:
@@ -429,6 +418,7 @@ def main():
         bus.shutdown()
         notifier.stop()
         client.loop_stop()
+        client.disconnect()
         if sync_timer:
             sync_timer.stop()
 
