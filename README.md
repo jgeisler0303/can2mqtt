@@ -28,6 +28,7 @@ Multiple topic and payload strings can be formed and sent to the broker from one
 `topic_template` and `payload_template` may be strings or arrays of strings. Each string is formated using [Format Specification Mini-Language](https://docs.python.org/2/library/string.html#format-specification-mini-language).
 Each replacement field has to explicitly reference a variable name from `var_names`.
 Additionally to the variable names defined in `var_names`, `topic_template` and `payload_template` may reference the timestamp and CAN id of the received message by the names `canid`resp. `t`.
+The CAN timestamp is also provided under the name `dt` in `datetime` format which may be converted to string with e.g. the following pattern: `{dt:%Y-%m-%d %H:%M:%S.%f}`.
 
 ## Parsing of incoming MQTT messages
 Each transmitter handles MQTT messages received due to its `subscriptions`.
