@@ -103,7 +103,7 @@ def testForStringList(l, n):
     if not isinstance(l, list):
         l= [l]
     for e in l:
-        if not isinstance(e, basestring):
+        if not isinstance(e, str):
             raise ValueError("All elements of parameter %s must be strings" % n)
     return l
 
@@ -111,7 +111,7 @@ class CanMessage2MQTT:
     def __init__(self, name, unpack_template, var_names, topic_template, payload_template):
         self.name= name
         
-        if not isinstance(unpack_template, basestring):
+        if not isinstance(unpack_template, str):
             raise ValueError("Parameter unpack_template must be a string")
         self.unpack_template= unpack_template
         self.var_names= testForStringList(var_names, "var_names")
@@ -169,9 +169,9 @@ class MQTT2CanMessage:
     def __init__(self, name, canid, subscriptions, pack_template, var_names, topic_template, payload_template):
         self.name= name
         
-        if not isinstance(canid, basestring) and not isinstance(canid, int):
+        if not isinstance(canid, str) and not isinstance(canid, int):
             raise ValueError("Parameter canid must be a string or an int")
-        if isinstance(canid, basestring):
+        if isinstance(canid, str):
             try:
                 canid= int(canid, 0)
             except:
@@ -179,14 +179,14 @@ class MQTT2CanMessage:
             
         self.subscriptions= testForStringList(subscriptions, "subscriptions")
         
-        if not isinstance(pack_template, basestring):
+        if not isinstance(pack_template, str):
             raise ValueError("Parameter pack_template must be a string")
         self.canid= canid
         self.pack_template= pack_template
         self.var_names= testForStringList(var_names, "var_names")
 
         if topic_template:
-            if not isinstance(topic_template, basestring):
+            if not isinstance(topic_template, str):
                 raise ValueError("Parameter topic_template must be a string")
             try:
                 self.topic_template= parse.compile(topic_template)
@@ -195,7 +195,7 @@ class MQTT2CanMessage:
         else:
             self.topic_template= None
             
-        if not isinstance(payload_template, basestring):
+        if not isinstance(payload_template, str):
             raise ValueError("Parameter payload_template must be a string")
         try:
             self.payload_template= parse.compile(payload_template)
@@ -290,7 +290,7 @@ def main():
             if not isinstance(canid, list):
                 canids= [canid]
             for canid in canids:
-                if isinstance(canid, basestring):
+                if isinstance(canid, str):
                     try:
                         canid= int(canid, 0)
                     except ValueError as e:
@@ -336,7 +336,7 @@ def main():
         sys.exit(1)
     
     logging.info("Starting MQTT")
-    client = mqtt.Client(client_id=c.mqtt.client_id("can2mqtt"), protocol=mqtt.MQTTv31)
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1,client_id=c.mqtt.client_id("can2mqtt"), protocol=mqtt.MQTTv31)
     client.on_message= on_message
     client.user_data_set((bus, transmitters))
     try:

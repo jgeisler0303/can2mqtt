@@ -1,6 +1,6 @@
 {
     canbus: {
-        channel: "vcan0",
+        channel: "can0",
         interface: "socketcan_ctypes"
     },
     canopen: {
@@ -18,22 +18,39 @@
     },
     receivers: [
         {
-            canid: "0x123",
-            unpack_template: "u8u8u8",
-            var_names: ["val1", "val2", "val3 via int2on_off"],
-            topic_template: "/test/bla",
-            payload_template: "val1= {val1:x}, val2= {val2:x}, val3= {val3}"
+            canid: "0x510",
+            unpack_template: ">hhhh",
+            var_names: ["numcells", "c01", "c02", "c03"],
+            topic_template: ["renogy/bms/cell_01", "renogy/bms/cell_02", "renogy/bms/cell_03"],
+            payload_template: ["{c01}","{c02}","{c03}"]
         },
-    ],
-    transmitters: [
         {
-            subscriptions: "/test/trans",
-            canid: "val1",
-            pack_template: "u8",
-            var_names: "val1",
-            topic_template: "",
-            payload_template: "{val1:d}",
-//            exact_match: true // not implemented yet
+            canid: "0x511",
+            unpack_template: ">hhhh",
+            var_names: ["c04", "c05", "c06", "c07"],
+            topic_template: ["renogy/bms/cell_04", "renogy/bms/cell_05", "renogy/bms/cell_06", "renogy/bms/cell_07"],
+            payload_template: ["{c04}","{c05}","{c06}","{c07}"]
+        },
+        {
+            canid: "0x512",
+            unpack_template: ">hhhh",
+            var_names: ["c08", "c09", "c10", "c11"],
+            topic_template: ["renogy/bms/cell_08", "renogy/bms/cell_09", "renogy/bms/cell_10", "renogy/bms/cell_11"],
+            payload_template: ["{c08}","{c09}","{c10}","{c11}"]
+        },
+        {
+            canid: "0x513",
+            unpack_template: ">hhhh",
+            var_names: ["c12", "c13", "c14", "c15"],
+            topic_template: ["renogy/bms/cell_12", "renogy/bms/cell_13", "renogy/bms/cell_14", "renogy/bms/cell_15"],
+            payload_template: ["{c12}","{c13}","{c14}","{c15}"]
+        },
+        {
+            canid: "0x514",
+            unpack_template: ">hhhh",
+            var_names: ["c16"],
+            topic_template: ["renogy/bms/cell_16"],
+            payload_template: ["{c16}"]
         },
     ]
 }

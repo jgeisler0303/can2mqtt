@@ -1,0 +1,7 @@
+.git/
+.gitignore
+LICENSE
+README.md
+.config.json
+.config.json.example
+
