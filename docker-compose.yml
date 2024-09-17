@@ -1,0 +1,9 @@
+
+services:
+  can2mqtt:
+    container_name: can2mqtt
+    build: .
+    network_mode: "host"
+    restart: on-failure
+    volumes:
+      - ./config.json:/app/config.json
