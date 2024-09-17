@@ -20,43 +20,43 @@
         {
             canid: "0x502",
             unpack_template: ">hhhh",
-            var_names: ["unknown", "totalvoltage via divideby10", "hcellmv", "lcellmv"],
-            topic_template: ["renogy/bms/volts", "renogy/bms/h_cell_mv", "renogy/bms/l_cell_mv"],
-            payload_template: ["{totalvoltage}","{hcellmv}","{lcellmv}"]
+            var_names: ["unknown", "totalvoltage via divideby10", "hcellv via mv2v", "lcellv via mv2v"],
+            topic_template: ["bms/volts", "bms/highest_cell_volts", "bms/lowest_cell_volts"],
+            payload_template: ["{totalvoltage}","{hcellv}","{lcellv}"]
         },
         {
             canid: "0x510",
             unpack_template: ">hhhh",
-            var_names: ["numcells", "c01", "c02", "c03"],
-            topic_template: ["renogy/bms/cell_01", "renogy/bms/cell_02", "renogy/bms/cell_03"],
+            var_names: ["numcells", "c01 via mv2v", "c02 via mv2v", "c03 via mv2v"],
+            topic_template: ["bms/cell_01", "bms/cell_02", "bms/cell_03"],
             payload_template: ["{c01}","{c02}","{c03}"]
         },
         {
             canid: "0x511",
             unpack_template: ">hhhh",
-            var_names: ["c04", "c05", "c06", "c07"],
-            topic_template: ["renogy/bms/cell_04", "renogy/bms/cell_05", "renogy/bms/cell_06", "renogy/bms/cell_07"],
+            var_names: ["c04 via mv2v", "c05 via mv2v", "c06 via mv2v", "c07 via mv2v"],
+            topic_template: ["bms/cell_04", "bms/cell_05", "bms/cell_06", "bms/cell_07"],
             payload_template: ["{c04}","{c05}","{c06}","{c07}"]
         },
         {
             canid: "0x512",
             unpack_template: ">hhhh",
-            var_names: ["c08", "c09", "c10", "c11"],
-            topic_template: ["renogy/bms/cell_08", "renogy/bms/cell_09", "renogy/bms/cell_10", "renogy/bms/cell_11"],
+            var_names: ["c08 via mv2v", "c09 via mv2v", "c10 via mv2v", "c11 via mv2v"],
+            topic_template: ["bms/cell_08", "bms/cell_09", "bms/cell_10", "bms/cell_11"],
             payload_template: ["{c08}","{c09}","{c10}","{c11}"]
         },
         {
             canid: "0x513",
             unpack_template: ">hhhh",
-            var_names: ["c12", "c13", "c14", "c15"],
-            topic_template: ["renogy/bms/cell_12", "renogy/bms/cell_13", "renogy/bms/cell_14", "renogy/bms/cell_15"],
+            var_names: ["c12 via mv2v", "c13 via mv2v", "c14 via mv2v", "c15 via mv2v"],
+            topic_template: ["bms/cell_12", "bms/cell_13", "bms/cell_14", "bms/cell_15"],
             payload_template: ["{c12}","{c13}","{c14}","{c15}"]
         },
         {
             canid: "0x514",
             unpack_template: ">hhhh",
-            var_names: ["c16"],
-            topic_template: ["renogy/bms/cell_16"],
+            var_names: ["c16 via mv2v"],
+            topic_template: ["bms/cell_16"],
             payload_template: ["{c16}"]
         },
     ]

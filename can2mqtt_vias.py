@@ -7,3 +7,7 @@ def int2on_off(i):
 
 def divideby10(i):
     return float(i)/10
+
+def mv2v(i):
+    volts = float(i)*.001
+    return f"{volts:.3f}"
