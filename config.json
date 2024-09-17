@@ -18,6 +18,13 @@
     },
     receivers: [
         {
+            canid: "0x502",
+            unpack_template: ">hhhh",
+            var_names: ["unknown", "totalvoltage via divideby10", "hcellmv", "lcellmv"],
+            topic_template: ["renogy/bms/volts", "renogy/bms/h_cell_mv", "renogy/bms/l_cell_mv"],
+            payload_template: ["{totalvoltage}","{hcellmv}","{lcellmv}"]
+        },
+        {
             canid: "0x510",
             unpack_template: ">hhhh",
             var_names: ["numcells", "c01", "c02", "c03"],
