@@ -18,6 +18,13 @@
     },
     receivers: [
         {
+            canid: "0x501",
+            unpack_template: ">ff",
+            var_names: ["current via floatnegation", "soc via float2decimals"],
+            topic_template: ["bms/current", "bms/soc"],
+            payload_template: ["{current}","{soc}"]
+        },
+        {
             canid: "0x502",
             unpack_template: ">hhhh",
             var_names: ["unknown", "totalvoltage via divideby10", "hcellv via mv2v", "lcellv via mv2v"],
