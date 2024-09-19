@@ -16,49 +16,49 @@
             canid: "0x501",
             unpack_template: ">ff",
             var_names: ["current via floatnegation", "soc via float2decimals"],
-            topic_template: ["bms/current", "bms/soc interval 15"],
+            topic_template: ["bms/current interval 5", "bms/soc interval 15"],
             payload_template: ["{current}","{soc}"]
         },
         {
             canid: "0x502",
             unpack_template: ">hhhh",
             var_names: ["unknown", "totalvoltage via divideby10", "hcellv via mv2v", "lcellv via mv2v"],
-            topic_template: ["bms/volts", "bms/highest_cell_volts", "bms/lowest_cell_volts"],
+            topic_template: ["bms/volts interval 20", "bms/highest_cell_volts interval 20", "bms/lowest_cell_volts interval 20"],
             payload_template: ["{totalvoltage}","{hcellv}","{lcellv}"]
         },
         {
             canid: "0x510",
             unpack_template: ">hhhh",
             var_names: ["numcells", "c01 via mv2v", "c02 via mv2v", "c03 via mv2v"],
-            topic_template: ["bms/cell_01", "bms/cell_02", "bms/cell_03"],
+            topic_template: ["bms/cell_01 interval 20", "bms/cell_02 interval 20", "bms/cell_03 interval 20"],
             payload_template: ["{c01}","{c02}","{c03}"]
         },
         {
             canid: "0x511",
             unpack_template: ">hhhh",
             var_names: ["c04 via mv2v", "c05 via mv2v", "c06 via mv2v", "c07 via mv2v"],
-            topic_template: ["bms/cell_04", "bms/cell_05", "bms/cell_06", "bms/cell_07"],
+            topic_template: ["bms/cell_04 interval 20", "bms/cell_05 interval 20", "bms/cell_06 interval 20", "bms/cell_07 interval 20"],
             payload_template: ["{c04}","{c05}","{c06}","{c07}"]
         },
         {
             canid: "0x512",
             unpack_template: ">hhhh",
             var_names: ["c08 via mv2v", "c09 via mv2v", "c10 via mv2v", "c11 via mv2v"],
-            topic_template: ["bms/cell_08", "bms/cell_09", "bms/cell_10", "bms/cell_11"],
+            topic_template: ["bms/cell_08 interval 20", "bms/cell_09 interval 20", "bms/cell_10 interval 20", "bms/cell_11 interval 20"],
             payload_template: ["{c08}","{c09}","{c10}","{c11}"]
         },
         {
             canid: "0x513",
             unpack_template: ">hhhh",
             var_names: ["c12 via mv2v", "c13 via mv2v", "c14 via mv2v", "c15 via mv2v"],
-            topic_template: ["bms/cell_12", "bms/cell_13", "bms/cell_14", "bms/cell_15"],
+            topic_template: ["bms/cell_12 interval 20", "bms/cell_13 interval 20", "bms/cell_14 interval 20", "bms/cell_15 interval 20"],
             payload_template: ["{c12}","{c13}","{c14}","{c15}"]
         },
         {
             canid: "0x514",
             unpack_template: ">hhhh",
             var_names: ["c16 via mv2v"],
-            topic_template: ["bms/cell_16"],
+            topic_template: ["bms/cell_16 interval 20"],
             payload_template: ["{c16}"]
         },
     ]

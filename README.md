@@ -42,6 +42,10 @@ Unpacked and parsed values named by variable names in the `var_names` parameter 
 Each such function must expect one scalar parameter and return one scalar parameter.
 To use a translation the variable name in `var_names` has to be followed by the key word "via" and then the name of the transformation function.
 
+## Reducing sent MQTT messages
+If you wish to reduce the number of MQTT messages being sent you can specify an interval in seconds in the `topic_template` strings.
+To specify the minimum interval a topic should be sent the `topic_template` has to be followed by the keyword "interval" and then the number of seconds to restrict additional messages for that topic
+
 # Logging
 For logging [python logging](https://docs.python.org/2/library/logging.html) is used.
 
