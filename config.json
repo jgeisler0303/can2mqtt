@@ -3,11 +3,6 @@
         channel: "can0",
         interface: "socketcan_ctypes"
     },
-    canopen: {
-        sync_interval: 10,
-        sync_count: 6,
-        auto_start: true
-    },
     mqtt: {
 //        username: "user", // not implemented yet
 //        password: "pass",// not implemented yet
@@ -21,7 +16,7 @@
             canid: "0x501",
             unpack_template: ">ff",
             var_names: ["current via floatnegation", "soc via float2decimals"],
-            topic_template: ["bms/current", "bms/soc"],
+            topic_template: ["bms/current", "bms/soc interval 15"],
             payload_template: ["{current}","{soc}"]
         },
         {

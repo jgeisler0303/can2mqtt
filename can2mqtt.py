@@ -125,6 +125,15 @@ class CanMessage2MQTT:
                 self.var_vias.append(None)
                     
         self.topic_template= testForStringList(topic_template, "topic_template")
+        self.topic_intervals= []
+        for i, v in enumerate(self.topic_template):
+            r = v.split(" interval ")
+            if len(r)>1:
+                self.topic_template[i]= r[0]
+                self.topic_intervals.append(r[1])
+            else:
+                self.topic_intervals.append(None)
+
         self.payload_template= testForStringList(payload_template, "payload_template")
         self.error_count= 0
         
@@ -149,7 +158,14 @@ class CanMessage2MQTT:
                     mdata[self.var_names[i]]= eval("vias."+v+"(mdata[\""+self.var_names[i]+"\"])")
         except BaseException as e:
             raise ValueError("Error applying via \"%s\" to value \"%s\"= \"%s\": %s" % (v, self.var_names[i], mdata[self.var_names[i]], e))
-                   
+        try:
+            for i, v in enumerate(self.topic_intervals):
+                if v:
+                    interval = int(v)
+                else:
+                    interval = 0
+        except BaseException as e:
+            raise ValueError("Error applying interval \"%s\" to topic \"%s\"" % (v, self.topic_template, e))
         data.update(mdata)
         
         for t, p in zip(self.topic_template, self.payload_template):
@@ -162,7 +178,7 @@ class CanMessage2MQTT:
             except BaseException as e:
                 raise ValueError("Error formating payload string \"%s\": %s" % (p, e))
             
-            yield topic, payload
+            yield topic, payload, interval
     
     
 class MQTT2CanMessage:
@@ -279,6 +295,7 @@ def main():
             try:
                 rcvr= CanMessage2MQTT(name, r.unpack_template(), r.var_names(), r.topic_template(), r.payload_template())
                 canid= r.canid()
+
             except jsoncfg.JSONConfigValueNotFoundError as e:
                 logging.error("Could not load receiver %s (#%d). Parameter \"%s\" not found at line= %d, col= %d" % (name, i+1, e.relative_path, e.line, e.column))
                 continue
@@ -391,6 +408,7 @@ def main():
         
     logging.info("Starting main loop")
     try:
+        times = {} # Keep track of last seen time
         while True:
             # test delay for stress test
             # time.sleep(0.005)
@@ -400,12 +418,21 @@ def main():
                     do_nmt_auto_start(m, bus)
 
                 if m.arbitration_id in receivers:
+                    times[m.arbitration_id] = time.time()
                     rcvr= receivers[m.arbitration_id]
                     try:
-                        for t, p in rcvr.translate(m):
-                            r= client.publish(t, p)
-                            if not (r[0] == mqtt.MQTT_ERR_SUCCESS):
-                                logging.error("Error publishing message \"%s\" to topic \"%s\". Return code %s: %s" % (t, p, str(r[0]), mqtt.error_string(r[0])))
+                        for t, p, i in rcvr.translate(m):
+                            #Have we seen this topic before?
+                            if t not in times:
+                                times[t] = time.monotonic()
+                                r= client.publish(t, p)
+                           
+                            #Only publish topic if it's been long enough
+                            if time.monotonic() - times[t] >= i:
+                                r= client.publish(t, p)
+                                times[t] = time.monotonic()
+                                if not (r[0] == mqtt.MQTT_ERR_SUCCESS):
+                                    logging.error("Error publishing message \"%s\" to topic \"%s\". Return code %s: %s" % (t, p, str(r[0]), mqtt.error_string(r[0])))
                     except BaseException as e:
                         logging.error("Error relaying message {%s} via receiver %s: %s" % (m, rcvr.name, e))
                         rcvr.error_count+= 1
