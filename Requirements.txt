@@ -1,0 +1,9 @@
+can==0.0.0
+json-cfg==0.4.2
+kwonly-args==1.0.10
+packaging==26.0
+paho-mqtt==2.1.0
+parse==1.20.2
+python-can==4.6.1
+typing_extensions==4.15.0
+wrapt==1.17.3

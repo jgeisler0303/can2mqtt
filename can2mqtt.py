@@ -20,8 +20,12 @@ import logging
 
 import can
 import paho.mqtt.client as mqtt
+from   paho.mqtt.client import CallbackAPIVersion
 
 import can2mqtt_vias as vias
+
+# Python2 to Python3
+basestring = str
 
 class RepeatedTimer:
     """Repeat `function` every `interval` seconds."""
@@ -58,14 +62,14 @@ def sync_master(bus, count):
         data= [sync_master.counter]
     else:
         data= []
-    bus.send(can.Message(extended_id= False, arbitration_id= 0x080, data= data))
+    bus.send(can.Message(is_extended_id= False, arbitration_id= 0x080, data= data))
 
 def do_nmt_auto_start(m, bus):
     if (m.arbitration_id & ~0x7F)==0x700:
         device_id = m.arbitration_id & 0x7F
         if len(m.data)>0 and m.data[0]!=5:
             msg = bytearray([1, device_id])
-            bus.send(can.Message(extended_id= False, arbitration_id= 0x000, data= msg))
+            bus.send(can.Message(is_extended_id= False, arbitration_id= 0x000, data= msg))
     
    
 def on_message(client, userdata, message):
@@ -75,7 +79,7 @@ def on_message(client, userdata, message):
         tmtrs= transmitters[sub]
         for tmtr in tmtrs:
             try:
-                canid, data= tmtr.translate(message.topic, message.payload)
+                canid, data= tmtr.translate(message.topic, str(message.payload))
             except BaseException as e:
                 logging.error("Error translating mqtt message \"%s\" from topic \"%s\" via transmitter %s: %s" % (message.payload, message.topic, tmtr.name, e))
                 tmtr.error_count+= 1
@@ -85,7 +89,7 @@ def on_message(client, userdata, message):
                 continue
             
             try:
-                m= can.Message(extended_id= False, arbitration_id= canid, data= data)
+                m= can.Message(is_extended_id= False, arbitration_id= canid, data= data)
             except BaseException as e:
                 logging.error("Error forming can message id= \"%s\", data \"%s\" via transmitter %s: %s" % (canid, data, tmtr.name, e))
                 tmtr.error_count+= 1
@@ -328,7 +332,7 @@ def main():
         sys.exit(1)
         
     try:
-        bus = can.interface.Bus(c.canbus.channel(), bustype=c.canbus.interface())
+        bus = can.interface.Bus(c.canbus.channel(), interface=c.canbus.interface())
         canBuffer= can.BufferedReader()
         notifier = can.Notifier(bus, [canBuffer], timeout=0.1)
     except BaseException as e:
@@ -336,8 +340,8 @@ def main():
         sys.exit(1)
     
     logging.info("Starting MQTT")
-    client = mqtt.Client(client_id=c.mqtt.client_id("can2mqtt"), protocol=mqtt.MQTTv31)
-    client.on_message= on_message
+    client = mqtt.Client(CallbackAPIVersion.VERSION2, client_id=c.mqtt.client_id("can2mqtt"), protocol=mqtt.MQTTv31)
+    client.on_message=on_message
     client.user_data_set((bus, transmitters))
     try:
         mqtt_errno= client.connect(c.mqtt.host("127.0.0.1"), c.mqtt.port(1883), 60)
